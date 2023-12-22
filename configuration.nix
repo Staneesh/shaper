@@ -15,7 +15,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.luks.devices."luks-1b4c3d27-fad0-46d5-b1ea-14c36483e40e".device = "/dev/disk/by-uuid/1b4c3d27-fad0-46d5-b1ea-14c36483e40e";
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "shaper"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -54,13 +54,11 @@
   services.xserver = {
     layout = "pl";
     xkbVariant = "";
+    xkbOptions = "caps:swapescape";
   };
 
   # Configure console keymap
   console.keyMap = "pl2";
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -83,14 +81,11 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.shaper = {
+  users.users.stanisz = {
     isNormalUser = true;
-    description = "Shaper";
+    description = "Maciek Staniszewski";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      firefox
-    #  thunderbird
-    ];
+    shell = pkgs.nushell;
   };
 
   # Allow unfree packages
@@ -99,28 +94,53 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    git
+    htop
+    tree
+    nload
+    neovim
+    home-manager
   ];
+
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+  };
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
+
+  nix = {
+      settings.auto-optimise-store = true;
+      package = pkgs.nixFlakes;
+      gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 30d";
+      };
+      extraOptions = ''
+        experimental-features = nix-command flakes
+      '';
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
