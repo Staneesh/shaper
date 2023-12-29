@@ -146,6 +146,9 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Enable tailscale 
+  services.tailscale.enable = true;
+
   nix = {
       settings.auto-optimise-store = true;
       package = pkgs.nixFlakes;
