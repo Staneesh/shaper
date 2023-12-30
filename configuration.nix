@@ -83,6 +83,30 @@
   # Configure console keymap
   console.keyMap = "pl2";
 
+  # Enable the primest of gamings 
+  programs.steam.enable = true;
+
+  # Enable the default NixOS power management tool for laptops:
+  powerManagement.enable = true;
+  # Prevent overheating of the CPU:
+  services.thermald.enable = true;
+  # Common program to save power on laptops:
+  services.tlp = {
+    enable = true;  
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+
+      START_CHARGE_THRESH_BAT0 = 25; # 25 and bellow it starts to charge
+      STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+    };
+  };
+  # This needs to be explicitly disabled - it's included in Gnome and conflicting with tlp:
+  services.power-profiles-daemon.enable = false;
+  
   # Enable sound with pipewire.
   sound.enable = true;
   hardware.pulseaudio.enable = false;
