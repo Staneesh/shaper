@@ -80,6 +80,54 @@
     xkbOptions = "caps:swapescape";
   };
 
+  # Configure syncthing:
+  services.syncthing = {
+    enable = true;
+    user = "stanisz";
+    group = "syncthing";
+    overrideDevices = false;
+    overrideFolders = false;
+    dataDir = "/home/stanisz";
+
+    settings = {
+      devices = {
+        "graphy-stockos" = { 
+          id = "UVKPSU3-G5WBAHF-4AJEHZC-4XIUGRG-L3VKAUP-IT76AZE-3JAFBLL-F4RBWAQ"; 
+          autoAcceptFolders = true;
+        };
+      };
+      folders = {
+        "keyrings" = {
+          enable = true;  # This machine should share this folder out.
+          path = "~/.local/share/keyrings";
+          devices = [ "graphy-stockos" ];
+          versioning = {
+            type = "simple";
+            params.keep = "10";
+          };
+        };
+        "gpg" = {
+          enable = true;
+          path = "~/.gnupg";
+          devices = [ "graphy-stockos" ];
+          versioning = {
+            type = "simple";
+            params.keep = "10";
+          };
+        };
+        "ssh" = {
+          enable = true;
+          path = "~/.ssh";
+          devices = [ "graphy-stockos" ];
+          versioning = {
+            type = "simple";
+            params.keep = "10";
+          };
+        };
+      };
+    };
+  };
+
   # Configure console keymap
   console.keyMap = "pl2";
 
@@ -131,7 +179,7 @@
   users.users.stanisz = {
     isNormalUser = true;
     description = "Maciek Staniszewski";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "syncthing" ];
     shell = pkgs.nushell;
   };
 
@@ -155,7 +203,6 @@
       dockerCompat = true;
     };
   };
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
